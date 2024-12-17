@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace server.Models
+namespace server.DTOs
 {
-    public class UserModel
+    public class SignUpDTO
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -20,24 +18,18 @@ namespace server.Models
         public string FullName { get; set; }
 
         [Required]
+        
         [StringLength(100)]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
+
         [Required]
-        [StringLength(20, MinimumLength =4, ErrorMessage = "Username must be between 4 and 20 characters")]
+        [StringLength(20, MinimumLength = 4, ErrorMessage = "Username must be between 4 and 20 characters")]
         public string Username { get; set; }
+
         [Required]
+        [StringLength(20, ErrorMessage = "Password should not be more than 20 characters but at least 6 characters", MinimumLength = 6)]
         [DataType(DataType.Password)]
-
         public string Password { get; set; }
-
-        public string? AvatarUrl { get; set; }
-
-        public ICollection<IncomeModel> Incomes { get; set; }
-        public ICollection<ExpenseModel> Expenses { get; set; }
-        public ICollection<BudgetModel> Budgets { get; set; }
-
-
     }
-
 }
