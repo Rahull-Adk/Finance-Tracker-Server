@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace server.Models
 {
@@ -22,6 +23,7 @@ namespace server.Models
 
         [ForeignKey("User")]
         public int UserId { get; set; }
+        [JsonIgnore]
         public UserModel User { get; set; }
     }
 

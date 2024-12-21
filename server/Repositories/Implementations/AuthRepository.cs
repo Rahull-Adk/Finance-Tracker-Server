@@ -17,16 +17,29 @@ namespace server.Repositories.Implementations
             await _db.SaveChangesAsync();
         }
 
-        public async Task<UserModel> FindByUsernameAsync(string username)
+        public async Task UpdateUserAsync(UserModel user)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == username);
-            return user;
+             _db.Users.Update(user);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<List<UserModel>> GetAllUsersAsync()
+        public async Task<Result<UserModel>> FindByUsernameAsync(string username)
         {
-            var users = await _db.Users.ToListAsync();
-            return users;
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == username);
+            if (user == null)
+            {
+                return Result<UserModel>.Error(404, "User not found");
+            }
+            return Result<UserModel>.Success(user, string.Empty);
         }
+        public async Task<Result<UserModel>> FindByIdAsync(string id)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Id.ToString() == id);
+            if (user == null) {
+                return Result<UserModel>.Error(404, "User not found");
+            }
+            return Result<UserModel>.Success(user, string.Empty);
+        }
+
     }
 }

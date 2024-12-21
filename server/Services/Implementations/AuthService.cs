@@ -60,13 +60,14 @@ namespace server.Services.Implementations
             {
                 return Result<SignInDTO>.Error(404, "User not found");
             }
+            
 
-            var token = _token.GenerateJWT(user);
+            var token = _token.GenerateJWT(user.Data);
 
             var response = new SignInDTO
             {
-                EmailOrUsername = user.Username,
-                Password = user.Password,
+                EmailOrUsername = user.Data.Username,
+                Password = user.Data.Password,
             };
             return Result<SignInDTO>.Success(response, token);
         }

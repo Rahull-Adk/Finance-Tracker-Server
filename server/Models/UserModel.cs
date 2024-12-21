@@ -28,8 +28,10 @@ namespace server.Models
         public string Username { get; set; }
         [Required]
         [DataType(DataType.Password)]
-
+        
         public string Password { get; set; }
+
+        public decimal Balance { get; set; }
 
         public string? AvatarUrl { get; set; }
 

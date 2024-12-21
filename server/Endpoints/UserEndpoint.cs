@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using server.Data;
 using server.DTOs;
 using server.Models;
@@ -57,15 +56,23 @@ namespace server.Controllers
                 }
 
             });
-            authEndpoints.MapGet("/logout", async (HttpContext httpcontext) =>
+            authEndpoints.MapGet("/logout", async (HttpContext httpContext) =>
             {
-                httpcontext.Response.Cookies.Delete("AuthToken");
+                httpContext.Response.Cookies.Delete("AuthToken");
                 return Results.Ok("User logged out successfully");
             }).RequireAuthorization().RequireAuthorization();
 
+            authEndpoints.MapGet("/me", async ([FromServices] IUserService _userService) =>
+            {
+                var currentUser = await _userService.GetCurrentUserAsync();
+                currentUser.Data.Password = null;
+                return Results.Ok(currentUser);
+            }).RequireAuthorization();
 
             return _app;
         }
+
+
 
     }
 }

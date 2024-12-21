@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using server.Controllers;
 using server.Data;
+using server.Endpoints;
 using server.Helpers;
 using server.Repositories.Implementations;
 using server.Repositories.Interfaces;
@@ -54,10 +55,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+        .AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IIncomeService, IncomeService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
+
 builder.Services.AddScoped<GenerateToken>();
 var app = builder.Build();
 
@@ -67,8 +83,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseUserAuthenticaion();
+app.UseIncome();
 app.Run();
