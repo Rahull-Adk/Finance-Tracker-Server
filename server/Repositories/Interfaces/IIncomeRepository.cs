@@ -4,8 +4,9 @@ namespace server.Repositories.Interfaces
 {
     public interface IIncomeRepository
     {
-        public Task<Result<IncomeModel>> GetCurrentUserIncomeByIdAsync(int id, Result<UserModel> currentUser);
-        public Task UpdateIncomeAsync(IncomeModel income);
-        public Task DeleteIncomeAsync(IncomeModel income);
+        Task<Result<IncomeModel>> GetCurrentUserIncomeByIdAsync(int id, Result<UserModel> currentUser);
+        Task AddIncomeAsync(IncomeModel income);
+        Task UpdateIncomeAsync(IncomeModel income);
+        Task DeleteIncomeAsync(IncomeModel income);
     }
 }

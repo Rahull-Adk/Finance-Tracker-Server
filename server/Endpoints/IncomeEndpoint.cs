@@ -12,27 +12,6 @@ namespace server.Endpoints
         public static IEndpointRouteBuilder UseIncome(this IEndpointRouteBuilder _app)
         {
             var incomeGroup = _app.MapGroup("api/users/myIncomes");
-            incomeGroup.MapGet("/", async ([FromServices] IIncomeService _incomeService) =>
-            {
-                var incomes = await _incomeService.GetAllIncomeAsync();
-                if (incomes.Data is null)
-                {
-                    return Results.NotFound("No income found");
-                }
-                return Results.Ok(incomes.Data);
-            }).RequireAuthorization();
-
-
-            incomeGroup.MapGet("/{id}", async (int id, [FromServices] IIncomeService _incomeService) =>
-            {
-                var incomes = await _incomeService.GetIncomeByIdAsync(id);
-                if (incomes.Data is null)
-                {
-                    return Results.NotFound("No income found");
-                }
-                return Results.Ok(incomes.Data);
-            }).RequireAuthorization();
-
 
             incomeGroup.MapPost("/", async (IncomeDTO income, [FromServices] AppDbContext _db, [FromServices] IAuthRepository _auth, [FromServices] IIncomeService _incomeService) =>
             {
@@ -44,33 +23,47 @@ namespace server.Endpoints
                 return Results.Ok(responseIncome.Data);
             }).RequireAuthorization();
 
+            incomeGroup.MapGet("/", async ([FromServices] IIncomeService _incomeService) =>
+            {
+                var incomes = await _incomeService.GetAllIncomeAsync();
+                if (incomes.Data is null)
+                {
+                    return Results.NotFound("No incomes found");
+                }
+                return Results.Ok(incomes.Data);
+            }).RequireAuthorization();
 
-            incomeGroup.MapPost("/{id}", async (int id, [FromServices] IIncomeService _incomeService, [FromBody] IncomeModel income) =>
+            incomeGroup.MapGet("/{id}", async (int id, [FromServices] IIncomeService _incomeService) =>
+            {
+                var income = await _incomeService.GetIncomeByIdAsync(id);
+                if (!income.IsSuccess)
+                {
+                    return Results.NotFound(income.ErrorMessage);
+                }
+                return Results.Ok(income.Data);
+            }).RequireAuthorization();
+
+            incomeGroup.MapPut("/{id}", async (int id, IncomeDTO income, [FromServices] IIncomeService _incomeService) =>
             {
                 var updatedIncome = await _incomeService.UpdateIncomeAsync(id, income);
                 if (!updatedIncome.IsSuccess)
                 {
-                    return Results.StatusCode(500);
+                    return Results.BadRequest(updatedIncome.ErrorMessage);
                 }
-                return Results.Ok(updatedIncome);
+                return Results.Ok(updatedIncome.Data);
             }).RequireAuthorization();
-
 
             incomeGroup.MapDelete("/{id}", async (int id, [FromServices] IIncomeService _incomeService) =>
             {
-                var response = await _incomeService.DeleteIncomeByIdAsync(id);
-                if (!response.IsSuccess)
+                var result = await _incomeService.DeleteIncomeByIdAsync(id);
+                if (!result.IsSuccess)
                 {
-                    return Results.NotFound(response.ErrorMessage);
+                    return Results.BadRequest(result.ErrorMessage);
                 }
-                return Results.Ok("Income Deleted Successfully");
+                return Results.Ok(result.Message);
             }).RequireAuthorization();
 
-
             return _app;
-
         }
-
-
     }
 }

@@ -35,9 +35,9 @@ namespace server.Models
 
         public string? AvatarUrl { get; set; }
 
-        public ICollection<IncomeModel> Incomes { get; set; }
-        public ICollection<ExpenseModel> Expenses { get; set; }
-        public ICollection<BudgetModel> Budgets { get; set; }
+        public ICollection<IncomeModel> Incomes { get; set; } = new List<IncomeModel>();
+        public ICollection<ExpenseModel> Expenses { get; set; } = new List<ExpenseModel>();
+        public ICollection<BudgetModel> Budgets { get; set; } = new List<BudgetModel>();
 
 
     }

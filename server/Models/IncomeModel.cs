@@ -7,7 +7,6 @@ namespace server.Models
 {
     public class IncomeModel
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]

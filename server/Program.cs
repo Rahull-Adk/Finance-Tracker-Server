@@ -70,9 +70,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IIncomeService, IncomeService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IIncomeService, IncomeService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
 builder.Services.AddScoped<GenerateToken>();
 var app = builder.Build();
@@ -89,4 +91,5 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseUserAuthenticaion();
 app.UseIncome();
+app.UseExpense();
 app.Run();

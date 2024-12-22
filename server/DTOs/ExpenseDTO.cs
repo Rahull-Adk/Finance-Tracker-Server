@@ -2,13 +2,13 @@
 
 namespace server.DTOs
 {
-    public class IncomeDTO
+    public class ExpenseDTO
     {
         [Required]
         public decimal Amount { get; set; }
 
         [Required]
-        public string Source { get; set; }
+        public string Category { get; set; }
 
         public string Description { get; set; }
 

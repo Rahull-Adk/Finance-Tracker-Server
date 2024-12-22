@@ -5,7 +5,6 @@ namespace server.Models
 {
     public class ExpenseModel
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]

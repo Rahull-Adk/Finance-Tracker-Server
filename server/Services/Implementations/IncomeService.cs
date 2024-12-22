@@ -1,5 +1,4 @@
-﻿
-using server.DTOs;
+﻿using server.DTOs;
 using server.Models;
 using server.Repositories.Interfaces;
 using server.Services.ServiceInterfaces;
@@ -20,29 +19,23 @@ namespace server.Services.Implementations
 
         public async Task<Result<IncomeModel>> AddIncomeAsync(IncomeDTO income)
         {
-
             var currentUser = await _userService.GetCurrentUserAsync();
             if (currentUser.Data is null)
             {
                 return Result<IncomeModel>.Error(404, "User not found");
             }
 
-            if (currentUser.Data.Incomes is null)
-            {
-                ICollection<IncomeModel> newIncome = new List<IncomeModel>();
-                currentUser.Data.Incomes = newIncome;
-
-            }
             var existingIncome = currentUser.Data.Incomes.FirstOrDefault(i =>
-        i.Amount == income.Amount &&
-        i.Source == income.Source &&
-        i.Description == income.Description &&
-        i.Date == income.Date);
+                i.Amount == income.Amount &&
+                i.Source == income.Source &&
+                i.Description == income.Description &&
+                i.Date == income.Date);
 
             if (existingIncome != null)
             {
                 return Result<IncomeModel>.Error(409, "Duplicate income entry");
             }
+
             var createdIncome = new IncomeModel()
             {
                 UserId = currentUser.Data.Id,
@@ -51,15 +44,13 @@ namespace server.Services.Implementations
                 Date = income.Date,
                 Amount = income.Amount,
             };
+
             currentUser.Data.Incomes.Add(createdIncome);
             currentUser.Data.Balance += createdIncome.Amount;
             await _authRepository.UpdateUserAsync(currentUser.Data);
-            var responseIncome = currentUser.Data.Incomes.FirstOrDefault(i => i.Id == createdIncome.Id);
-            if (responseIncome == null)
-            {
-                return Result<IncomeModel>.Error(404, "Income not found");
-            }
-            return Result<IncomeModel>.Success(responseIncome, string.Empty);
+            await _incomeRepository.AddIncomeAsync(createdIncome);
+
+            return Result<IncomeModel>.Success(createdIncome, string.Empty);
         }
 
         public async Task<Result<ICollection<IncomeModel>>> GetAllIncomeAsync()
@@ -70,39 +61,6 @@ namespace server.Services.Implementations
                 return Result<ICollection<IncomeModel>>.Error(currentUser.ErrorCode, "User not found");
             }
             return Result<ICollection<IncomeModel>>.Success(currentUser.Data.Incomes, string.Empty);
-        }
-
-        public async Task<Result<IncomeModel>> UpdateIncomeAsync(int id, IncomeModel income)
-        {
-            var currentUser = await _userService.GetCurrentUserAsync();
-            if (currentUser.Data is null)
-            {
-                return Result<IncomeModel>.Error(404, "User not found");
-            }
-            var result = await _incomeRepository.GetCurrentUserIncomeByIdAsync(id, currentUser);
-            var selectedIncome = result.Data;
-            if (result is null)
-            {
-                return Result<IncomeModel>.Error(404, "Income with given Id not found");
-            }
-
-            currentUser.Data.Balance -= selectedIncome.Amount;
-            currentUser.Data.Balance += income.Amount;
-            selectedIncome.Source = income.Source;
-            selectedIncome.Amount = income.Amount;
-            selectedIncome.Description = income.Description;
-            selectedIncome.Date = income.Date;
-
-            try
-            {
-              await  _incomeRepository.UpdateIncomeAsync(selectedIncome);
-                await _authRepository.UpdateUserAsync(currentUser.Data);
-                return Result<IncomeModel>.Success(income, string.Empty);
-            }
-            catch (Exception ex)
-            {
-                return Result<IncomeModel>.Error(500, ex.ToString());
-            }
         }
 
         public async Task<Result<IncomeModel>> GetIncomeByIdAsync(int id)
@@ -117,6 +75,42 @@ namespace server.Services.Implementations
             return Result<IncomeModel>.Success(income, string.Empty);
         }
 
+        public async Task<Result<IncomeModel>> UpdateIncomeAsync(int id, IncomeDTO income)
+        {
+            var currentUser = await _userService.GetCurrentUserAsync();
+            if (currentUser.Data is null)
+            {
+                return Result<IncomeModel>.Error(404, "User not found");
+            }
+
+            var result = await _incomeRepository.GetCurrentUserIncomeByIdAsync(id, currentUser);
+            var selectedIncome = result.Data;
+            if (selectedIncome is null)
+            {
+                return Result<IncomeModel>.Error(404, "Income with given Id not found");
+            }
+
+            // Update balance
+            currentUser.Data.Balance -= selectedIncome.Amount;
+            currentUser.Data.Balance += income.Amount;
+
+            selectedIncome.Source = income.Source;
+            selectedIncome.Amount = income.Amount;
+            selectedIncome.Description = income.Description;
+            selectedIncome.Date = income.Date;
+
+            try
+            {
+                await _incomeRepository.UpdateIncomeAsync(selectedIncome);
+                await _authRepository.UpdateUserAsync(currentUser.Data);
+                return Result<IncomeModel>.Success(selectedIncome, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return Result<IncomeModel>.Error(500, ex.ToString());
+            }
+        }
+
         public async Task<Result<string>> DeleteIncomeByIdAsync(int id)
         {
             var currentUser = await _userService.GetCurrentUserAsync();
@@ -126,10 +120,11 @@ namespace server.Services.Implementations
             {
                 return Result<string>.Error(result.ErrorCode, result.ErrorMessage);
             }
-            currentUser.Data.Balance -= income.Amount; 
+
+            currentUser.Data.Balance -= income.Amount;
             await _incomeRepository.DeleteIncomeAsync(income);
             await _authRepository.UpdateUserAsync(currentUser.Data);
-            return Result<string>.Success(string.Empty, "Income deleted Successfully");
+            return Result<string>.Success(string.Empty, "Income deleted successfully");
         }
     }
 }
