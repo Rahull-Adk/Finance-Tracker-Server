@@ -3,8 +3,7 @@ using server.Models;
 using server.Repositories.Interfaces;
 using server.Services.ServiceInterfaces;
 
-namespace server.Services.Implementations
-{
+namespace server.Services.Implementations { 
     public class ExpenseService : IExpenseService
     {
         private readonly IUserService _userService;
@@ -26,6 +25,22 @@ namespace server.Services.Implementations
                 return Result<ExpenseModel>.Error(404, "User not found");
             }
 
+            var existingExpense = currentUser.Data.Expenses.FirstOrDefault(e =>
+                e.Amount == expense.Amount &&
+                e.Category == expense.Category &&
+                e.Description == expense.Description &&
+                e.Date == expense.Date);
+
+            if (existingExpense != null)
+            {
+                return Result<ExpenseModel>.Error(409, "Duplicate expense entry");
+            }
+
+            if(expense.Amount > currentUser.Data.Balance)
+            {
+                return Result<ExpenseModel>.Error(400, "Insufficient balance");
+            }
+
             var createdExpense = new ExpenseModel()
             {
                UserId = currentUser.Data.Id,
@@ -35,12 +50,16 @@ namespace server.Services.Implementations
                 Amount = expense.Amount,
             };
 
-            currentUser.Data.Expenses.Add(createdExpense);
-            currentUser.Data.Balance -= createdExpense.Amount; 
+            var savedExpense = await _expenseRepository.AddExpenseAsync(createdExpense);
+
+            currentUser.Data.Expenses.Add(savedExpense);
+            currentUser.Data.Balance -= savedExpense.Amount;
+
+
             await _authRepository.UpdateUserAsync(currentUser.Data);
             await _expenseRepository.AddExpenseAsync(createdExpense);
 
-            return Result<ExpenseModel>.Success(createdExpense, string.Empty);
+            return Result<ExpenseModel>.Success(savedExpense, string.Empty);
         }
 
         public async Task<Result<ICollection<ExpenseModel>>> GetAllExpensesAsync()
@@ -72,6 +91,11 @@ namespace server.Services.Implementations
             {
                 return Result<ExpenseModel>.Error(404, "User not found");
             }
+            if (expense.Amount > currentUser.Data.Balance)
+            {
+                return Result<ExpenseModel>.Error(400, "Insufficient balance");
+            }
+
 
             var result = await _expenseRepository.GetCurrentUserExpenseByIdAsync(id, currentUser);
             var selectedExpense = result.Data;

@@ -23,6 +23,16 @@ namespace server.Repositories.Implementations
             return Result<IncomeModel>.Success(income, string.Empty);
         }
 
+<<<<<<< HEAD
+        public async Task<IncomeModel> AddIncomeAsync(IncomeModel income)
+        {
+            await _db.Incomes.AddAsync(income);
+            await _db.SaveChangesAsync();
+            return income;
+        }
+
+        public async Task<IncomeModel> UpdateIncomeAsync(IncomeModel income)
+=======
         public async Task AddIncomeAsync(IncomeModel income)
         {
             await _db.Incomes.AddAsync(income);
@@ -30,9 +40,11 @@ namespace server.Repositories.Implementations
         }
 
         public async Task UpdateIncomeAsync(IncomeModel income)
+>>>>>>> 2fe5ab6dbac881f8192bf317361ac707ee0c9ea6
         {
             _db.Incomes.Update(income);
             await _db.SaveChangesAsync();
+            return income;
         }
 
         public async Task DeleteIncomeAsync(IncomeModel income)

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace server.Models
 {
@@ -19,7 +20,9 @@ namespace server.Models
         public DateTime Date { get; set; } = DateTime.Now;
 
         [ForeignKey("User")]
+        
         public int UserId { get; set; }
+        [JsonIgnore]
         public UserModel User { get; set; }
     }
 }

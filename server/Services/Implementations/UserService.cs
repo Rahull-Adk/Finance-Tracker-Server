@@ -31,12 +31,14 @@ namespace server.Services.Implementations
                 return Result<UserModel>.Error(401, "Invalid Token");
             }
 
-            var currentUser = await _db.Users.Include(u => u.Incomes).FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            var currentUser = await _db.Users.Include(u => u.Incomes).Include(u => u.Expenses).FirstOrDefaultAsync(u => u.Id.ToString() == userId);
             if (currentUser is null)
             {
                 return Result<UserModel>.Error(404, "User not found");
             }
-            var balance = currentUser.Incomes.Sum(i => i.Amount);
+            var income = currentUser.Incomes.Sum(i => i.Amount);
+            var expense = currentUser.Expenses.Sum(u => u.Amount);
+            var balance = income - expense;
             currentUser.Balance = balance;
             await _db.SaveChangesAsync();
             return Result<UserModel>.Success(currentUser, string.Empty);

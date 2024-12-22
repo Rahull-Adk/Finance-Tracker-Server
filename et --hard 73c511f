@@ -1,0 +1,11 @@
+[33m2fe5ab6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{0}: reset: moving to 2fe5ab6dbac881f8192bf317361ac707ee0c9ea6
+[33m3ec5b9c[m HEAD@{1}: reset: moving to 3ec5b9c770cee5c0ffca77ded23f3cb7c5641d9a
+[33m73c511f[m HEAD@{2}: reset: moving to 73c511ff3a1865441e3bcb69c99d23d12e335056
+[33m73c511f[m HEAD@{3}: commit: 2.2: Fixed all bugs
+[33m3ec5b9c[m HEAD@{4}: commit (amend): 3.1-Bugs on Expense and Income functions
+[33m2fe5ab6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{5}: commit: 2.1-Bugs on Expense and Income functions
+[33mb1b84ce[m HEAD@{6}: commit: 03-Added income management functionalities
+[33m889cf80[m HEAD@{7}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33med433fc[m HEAD@{8}: commit: 02-Added authentication and authorizing functionality
+[33m15a774e[m HEAD@{9}: commit: Add project files.
+[33m5332c01[m HEAD@{10}: commit (initial): Add .gitattributes, .gitignore, README.md, and LICENSE.txt.

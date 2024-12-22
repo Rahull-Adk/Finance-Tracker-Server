@@ -20,7 +20,11 @@ namespace server.Endpoints
                 {
                     return Results.BadRequest(responseExpense.ErrorMessage);
                 }
+<<<<<<< HEAD
+                return Results.Ok(responseExpense);
+=======
                 return Results.Ok(responseExpense.Data);
+>>>>>>> 2fe5ab6dbac881f8192bf317361ac707ee0c9ea6
             }).RequireAuthorization();
 
             expenseGroup.MapGet("/", async ([FromServices] IExpenseService _expenseService) =>

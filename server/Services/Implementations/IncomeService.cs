@@ -38,6 +38,7 @@ namespace server.Services.Implementations
 
             var createdIncome = new IncomeModel()
             {
+
                 UserId = currentUser.Data.Id,
                 Source = income.Source,
                 Description = income.Description,
@@ -45,12 +46,21 @@ namespace server.Services.Implementations
                 Amount = income.Amount,
             };
 
+<<<<<<< HEAD
+          var savedIncome =   await _incomeRepository.AddIncomeAsync(createdIncome);
+            currentUser.Data.Incomes.Add(savedIncome);
+            currentUser.Data.Balance += savedIncome.Amount;
+            await _authRepository.UpdateUserAsync(currentUser.Data);
+
+            return Result<IncomeModel>.Success(savedIncome, string.Empty);
+=======
             currentUser.Data.Incomes.Add(createdIncome);
             currentUser.Data.Balance += createdIncome.Amount;
             await _authRepository.UpdateUserAsync(currentUser.Data);
             await _incomeRepository.AddIncomeAsync(createdIncome);
 
             return Result<IncomeModel>.Success(createdIncome, string.Empty);
+>>>>>>> 2fe5ab6dbac881f8192bf317361ac707ee0c9ea6
         }
 
         public async Task<Result<ICollection<IncomeModel>>> GetAllIncomeAsync()
