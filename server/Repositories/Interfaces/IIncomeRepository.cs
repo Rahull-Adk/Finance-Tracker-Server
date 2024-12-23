@@ -5,7 +5,6 @@ namespace server.Repositories.Interfaces
     public interface IIncomeRepository
     {
         Task<Result<IncomeModel>> GetCurrentUserIncomeByIdAsync(int id, Result<UserModel> currentUser);
-<<<<<<< HEAD
         Task<IncomeModel> AddIncomeAsync(IncomeModel income);
         Task<IncomeModel> UpdateIncomeAsync(IncomeModel income);
 =======

@@ -53,14 +53,7 @@ namespace server.Services.Implementations
             await _authRepository.UpdateUserAsync(currentUser.Data);
 
             return Result<IncomeModel>.Success(savedIncome, string.Empty);
-=======
-            currentUser.Data.Incomes.Add(createdIncome);
-            currentUser.Data.Balance += createdIncome.Amount;
-            await _authRepository.UpdateUserAsync(currentUser.Data);
-            await _incomeRepository.AddIncomeAsync(createdIncome);
 
-            return Result<IncomeModel>.Success(createdIncome, string.Empty);
->>>>>>> 2fe5ab6dbac881f8192bf317361ac707ee0c9ea6
         }
 
         public async Task<Result<ICollection<IncomeModel>>> GetAllIncomeAsync()
@@ -100,7 +93,6 @@ namespace server.Services.Implementations
                 return Result<IncomeModel>.Error(404, "Income with given Id not found");
             }
 
-            // Update balance
             currentUser.Data.Balance -= selectedIncome.Amount;
             currentUser.Data.Balance += income.Amount;
 

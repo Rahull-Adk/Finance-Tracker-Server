@@ -5,7 +5,6 @@ namespace server.Repositories.Interfaces
     public interface IExpenseRepository
     {
         Task<Result<ExpenseModel>> GetCurrentUserExpenseByIdAsync(int id, Result<UserModel> currentUser);
-<<<<<<< HEAD
         Task<ExpenseModel> AddExpenseAsync(ExpenseModel expense);
         Task<ExpenseModel> UpdateExpenseAsync(ExpenseModel expense);
 =======
